@@ -32,14 +32,23 @@ Data layer complete and validated. Model layer not yet written.
 
 | Written | Not yet written |
 |---|---|
-| `src/utils/env.py` | `src/train.py` |
-| `src/data/schema.py` | `src/baselines/rules.py` |
-| `src/data/cord.py` | `src/baselines/text_only.py` |
-| `src/data/sroie.py` | `src/eval/metrics.py` |
-| `scripts/benchmark_vram.py` | `src/assemble.py` |
-| `scripts/analyse_lengths.py` | `scripts/run_sweep.py` |
+| `src/utils/env.py` | `src/baselines/rules.py` |
+| `src/data/schema.py` | `src/baselines/text_only.py` |
+| `src/data/cord.py` | `src/assemble.py` |
+| `src/data/sroie.py` | `scripts/run_sweep.py` |
+| `src/data/loaders.py` | |
+| `src/eval/metrics.py` | |
+| `src/train.py` | |
+| `scripts/benchmark_vram.py` | |
+| `scripts/analyse_lengths.py` | |
 | `scripts/validate_preprocessing.py` | |
 | `scripts/validate_sroie.py` | |
+| `scripts/smoke_test.py` | |
+
+The training path is verified end to end on CPU by
+`scripts/smoke_test.py`, for both datasets: boxes land on the 0-1000
+grid, labels survive subword alignment, and a forward pass produces a
+finite loss.
 
 **No model has been trained yet.** No checkpoints exist.
 
@@ -141,6 +150,14 @@ at the ICDAR RRC portal.
   (`CORD_ABSENT_FROM_TEST`), so their F1 is undefined and a naive macro
   average silently scores 5 of 29 classes at zero, understating the model
   by ~17%. `menu.itemsubtotal` has 1 training and 6 test instances.
+- **CORD has no `O` class.** Its `valid_line` lists only annotated
+  words, so every token the CORD model ever sees belongs to some field
+  and it never learns to reject anything. The smoke test shows this
+  directly: a CORD batch decodes to 235 tagged tokens and 0 `O`, where
+  the same-sized SROIE batch has 319 `O`. On a real receipt, where OCR
+  also returns headers, footers and barcode junk, the CORD model will
+  assign those to some field. State this as a limitation; it is a
+  property of the dataset, not a bug in the pipeline.
 - SROIE labels entity *values*, not words, so labels must be recovered by
   string matching. Match rates are in `results/logs/sroie_alignment.json`
   and are the label-noise budget for that model - quote them in the
