@@ -1,0 +1,20 @@
+# Novelty experiment: how much annotated data does transfer learning actually need?
+# Inherits cord_layoutlmv3.yaml, overriding the training subset size.
+# 3 seeds per point so the curve can carry error bars - a single-seed curve at
+# n=50 is noise, not a result.
+
+base_config: configs/cord_layoutlmv3.yaml
+
+sweep:
+  train_subset_size: [50, 100, 200, 400, 800]
+  seed: [42, 1337, 2024]
+
+# Fewer samples need more epochs to see the same number of gradient updates.
+# Without this the small-n points are under-trained and the curve overstates
+# how much data is needed.
+epoch_schedule:
+  50: 60
+  100: 50
+  200: 40
+  400: 30
+  800: 20

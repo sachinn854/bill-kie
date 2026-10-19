@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Data - too big for git, re-downloaded by scripts/download_data.py
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model artifacts
+results/checkpoints/*
+!results/checkpoints/.gitkeep
+*.pt
+*.bin
+*.safetensors
+
+# Caches
+.cache/
+.ipynb_checkpoints/
+*.log
+
+# Keep logged metrics and figures - these ARE the results
+!results/logs/**/*.json
+!results/logs/**/*.csv
+!results/figures/**/*.png
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

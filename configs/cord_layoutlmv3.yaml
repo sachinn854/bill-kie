@@ -1,0 +1,47 @@
+# Main experiment: LayoutLMv3-base fine-tuned on CORD-v2 for token classification.
+# Batch-size fields left null are filled at runtime from the detected GPU
+# (see src/utils/env.py:recommended_batch_config) so the same file works on a
+# 4 GB laptop and a 16 GB Kaggle GPU. Effective batch size is pinned at 16 in
+# both cases, so runs stay comparable across machines.
+
+experiment:
+  name: cord_layoutlmv3_base
+  seed: 42
+  output_subdir: cord_layoutlmv3
+
+data:
+  dataset_id: nielsr/cord-layoutlmv3   # pre-tokenised; naver-clova-ix/cord-v2 is the raw source
+  max_seq_length: 512
+  # Low-data study: null = use all 800 training samples
+  train_subset_size: null
+
+model:
+  checkpoint: microsoft/layoutlmv3-base
+  # NOTE: LayoutLMv3 weights are CC-BY-NC-SA 4.0 (non-commercial).
+  # Fine for an academic project; must be disclosed in the report.
+
+training:
+  num_train_epochs: 20
+  learning_rate: 1.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  lr_scheduler_type: linear
+  eval_strategy: epoch
+  save_strategy: epoch
+  save_total_limit: 1
+  load_best_model_at_end: true
+  metric_for_best_model: f1
+  greater_is_better: true
+  logging_steps: 20
+  # Auto-filled from GPU if null
+  per_device_batch_size: null
+  gradient_accumulation_steps: null
+  gradient_checkpointing: null
+  fp16: null
+
+evaluation:
+  # Report both: exact match is the honest number, fuzzy shows how much of the
+  # gap is pure OCR/normalisation noise rather than a field-identification error.
+  matching: [exact, fuzzy]
+  fuzzy_threshold: 90
+  normalise: [lowercase, strip_punctuation, normalise_currency, normalise_dates]

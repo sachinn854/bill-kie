@@ -1,0 +1,29 @@
+# Core DL stack (torch installed separately with CUDA index - see scripts/setup_env.sh)
+transformers>=4.44,<5.0
+datasets>=2.20
+accelerate>=0.33
+safetensors
+sentencepiece
+protobuf
+
+# Evaluation
+seqeval
+evaluate
+scikit-learn
+rapidfuzz            # fuzzy field matching (exact-match vs fuzzy comparison)
+
+# OCR baseline
+pytesseract
+opencv-python
+Pillow
+
+# Data / config / viz
+pandas
+numpy
+pyyaml
+matplotlib
+seaborn
+tqdm
+
+# Experiment tracking (offline-capable)
+tensorboard
