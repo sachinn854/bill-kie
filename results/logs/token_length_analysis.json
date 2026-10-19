@@ -1,0 +1,90 @@
+{
+  "dataset": "naver-clova-ix/cord-v2",
+  "cap_examined": 256,
+  "splits": {
+    "train": {
+      "n": 800,
+      "mean": 58.8,
+      "median": 48,
+      "p90": 95,
+      "p95": 126,
+      "p99": 223,
+      "max": 296,
+      "pct_truncated": {
+        "128": 4.8,
+        "256": 0.1,
+        "384": 0.0,
+        "512": 0.0
+      },
+      "words_lost_at_256": {
+        "total.total_price": 3,
+        "total.creditcardprice": 3,
+        "sub_total.tax_price": 2,
+        "total.total_etc": 2,
+        "total.changeprice": 2,
+        "sub_total.subtotal_price": 1
+      }
+    },
+    "validation": {
+      "n": 100,
+      "mean": 50.9,
+      "median": 46,
+      "p90": 76,
+      "p95": 85,
+      "p99": 127,
+      "max": 153,
+      "pct_truncated": {
+        "128": 1.0,
+        "256": 0.0,
+        "384": 0.0,
+        "512": 0.0
+      }
+    },
+    "test": {
+      "n": 100,
+      "mean": 55.7,
+      "median": 48,
+      "p90": 89,
+      "p95": 116,
+      "p99": 137,
+      "max": 175,
+      "pct_truncated": {
+        "128": 4.0,
+        "256": 0.0,
+        "384": 0.0,
+        "512": 0.0
+      }
+    }
+  },
+  "categories": {
+    "menu.nm": 6595,
+    "menu.price": 2589,
+    "menu.cnt": 2423,
+    "total.total_price": 2115,
+    "sub_total.subtotal_price": 1481,
+    "total.cashprice": 1397,
+    "total.changeprice": 1299,
+    "sub_total.tax_price": 1283,
+    "menu.sub.nm": 832,
+    "menu.unitprice": 750,
+    "total.menuqty_cnt": 630,
+    "total.creditcardprice": 411,
+    "menu.discountprice": 403,
+    "sub_total.service_price": 353,
+    "sub_total.etc": 283,
+    "menu.sub.cnt": 195,
+    "sub_total.discount_price": 191,
+    "menu.sub.price": 163,
+    "total.emoneyprice": 131,
+    "total.menutype_cnt": 130,
+    "menu.num": 109,
+    "total.total_etc": 87,
+    "menu.etc": 19,
+    "menu.sub.unitprice": 14,
+    "menu.vatyn": 9,
+    "menu.itemsubtotal": 7,
+    "sub_total.othersvc_price": 6,
+    "void_menu.nm": 3,
+    "void_menu.price": 1
+  }
+}

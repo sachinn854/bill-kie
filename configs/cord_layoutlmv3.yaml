@@ -10,10 +10,15 @@ experiment:
   output_subdir: cord_layoutlmv3
 
 data:
-  dataset_id: nielsr/cord-layoutlmv3   # pre-tokenised; naver-clova-ix/cord-v2 is the raw source
-  # 256 chosen from measured throughput on 4 GB; verify against the real
-  # CORD token-length distribution before trusting it (scripts/analyse_lengths.py)
+  dataset_id: naver-clova-ix/cord-v2   # canonical; pre-tokenised mirrors are
+  # script-based datasets, unsupported since datasets 4.x
+  # Cap, not a target. Measured CORD token lengths: median 48, p99 223,
+  # max 296, so 256 truncates 0.1% of train and 0% of val/test. Lowering to
+  # 128 would truncate 4.8% - and truncation is not uniform, it eats the
+  # bottom of the receipt, which is exactly where the totals are.
+  # Used with dynamic padding, so typical batches are ~60-130 tokens.
   max_seq_length: 256
+  dynamic_padding: true
   # Low-data study: null = use all 800 training samples
   train_subset_size: null
 
@@ -36,7 +41,7 @@ training:
   greater_is_better: true
   logging_steps: 20
   # Auto-filled from GPU if null
-  per_device_batch_size: null
+  per_device_batch_size: null   # auto: 4 on a 4 GB GPU (measured 19 samp/s)
   gradient_accumulation_steps: null   # auto: effective batch pinned to 16
   fp16: null
 

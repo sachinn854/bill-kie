@@ -1,0 +1,103 @@
+{
+  "env": {
+    "platform": "local",
+    "os": "Windows 10",
+    "python": "3.11.15",
+    "torch": "2.9.1+cu128",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "vram_gb": 4.0,
+    "cuda_version": "12.8"
+  },
+  "total_vram_gb": 4.0,
+  "runs": [
+    {
+      "batch_size": 4,
+      "seq_len": 96,
+      "fp16": true,
+      "ran": true,
+      "usable": true,
+      "spilling": false,
+      "peak_vram_gb": 2.65,
+      "sec_per_step": 0.211,
+      "samples_per_sec": 19.0
+    },
+    {
+      "batch_size": 8,
+      "seq_len": 96,
+      "fp16": true,
+      "ran": true,
+      "usable": true,
+      "spilling": false,
+      "peak_vram_gb": 3.62,
+      "sec_per_step": 0.487,
+      "samples_per_sec": 16.4
+    },
+    {
+      "batch_size": 12,
+      "seq_len": 96,
+      "fp16": true,
+      "ran": true,
+      "usable": false,
+      "spilling": true,
+      "peak_vram_gb": 4.62,
+      "sec_per_step": 2.391,
+      "samples_per_sec": 5.0
+    },
+    {
+      "batch_size": 16,
+      "seq_len": 96,
+      "fp16": true,
+      "ran": true,
+      "usable": false,
+      "spilling": true,
+      "peak_vram_gb": 5.6,
+      "sec_per_step": 5.393,
+      "samples_per_sec": 3.0
+    },
+    {
+      "batch_size": 4,
+      "seq_len": 128,
+      "fp16": true,
+      "ran": true,
+      "usable": true,
+      "spilling": false,
+      "peak_vram_gb": 2.8,
+      "sec_per_step": 0.236,
+      "samples_per_sec": 16.9
+    },
+    {
+      "batch_size": 8,
+      "seq_len": 128,
+      "fp16": true,
+      "ran": true,
+      "usable": false,
+      "spilling": true,
+      "peak_vram_gb": 3.97,
+      "sec_per_step": 1.295,
+      "samples_per_sec": 6.2
+    },
+    {
+      "batch_size": 12,
+      "seq_len": 128,
+      "fp16": true,
+      "ran": true,
+      "usable": false,
+      "spilling": true,
+      "peak_vram_gb": 5.14,
+      "sec_per_step": 3.341,
+      "samples_per_sec": 3.6
+    },
+    {
+      "batch_size": 16,
+      "seq_len": 128,
+      "fp16": true,
+      "ran": true,
+      "usable": false,
+      "spilling": true,
+      "peak_vram_gb": 6.32,
+      "sec_per_step": 6.014,
+      "samples_per_sec": 2.7
+    }
+  ]
+}
