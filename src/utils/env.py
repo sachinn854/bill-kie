@@ -135,12 +135,50 @@ def recommended_batch_config(vram_gb: float | None = None) -> dict:
     return cfg
 
 
+# The Windows installer does not add Tesseract to PATH.
+_TESSERACT_WINDOWS_PATHS = (
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+    r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+)
+
+
+def find_tesseract() -> str | None:
+    """Locate the Tesseract binary, or None if it is not installed.
+
+    The Windows installer does not put Tesseract on PATH, so shutil.which
+    alone fails on a machine where it is perfectly well installed. Checking
+    the standard install locations avoids making every user edit PATH and
+    restart their shell, and the PATH lookup still comes first so Linux,
+    Kaggle and Colab resolve normally.
+    """
+    import shutil
+
+    found = shutil.which("tesseract")
+    if found:
+        return found
+    for candidate in _TESSERACT_WINDOWS_PATHS:
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def configure_tesseract() -> str | None:
+    """Point pytesseract at the binary. Returns the path, or None."""
+    path = find_tesseract()
+    if path:
+        import pytesseract
+
+        pytesseract.pytesseract.tesseract_cmd = path
+    return path
+
+
 def summary() -> dict:
     info = {
         "platform": detect_platform(),
         "os": f"{platform.system()} {platform.release()}",
         "python": platform.python_version(),
     }
+    info["tesseract"] = find_tesseract() or "not installed"
     try:
         import torch
         info["torch"] = torch.__version__
