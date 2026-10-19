@@ -1,0 +1,101 @@
+{
+  "dataset": "jsdnrs/ICDAR2019-SROIE",
+  "splits": {
+    "train": {
+      "n": 626,
+      "words_per_doc_mean": 109.6,
+      "bio_violations": 0,
+      "box_problems": 0,
+      "fields": {
+        "company": {
+          "exact": 603,
+          "alnum": 6,
+          "multipart": 0,
+          "fuzzy": 17,
+          "overlap": 0,
+          "unmatched": 0,
+          "multi_candidate": 11,
+          "matched_pct": 100.0
+        },
+        "date": {
+          "exact": 611,
+          "alnum": 6,
+          "multipart": 0,
+          "fuzzy": 1,
+          "overlap": 0,
+          "unmatched": 8,
+          "multi_candidate": 118,
+          "matched_pct": 98.7
+        },
+        "address": {
+          "exact": 26,
+          "alnum": 20,
+          "multipart": 344,
+          "fuzzy": 28,
+          "overlap": 0,
+          "unmatched": 208,
+          "multi_candidate": 0,
+          "matched_pct": 66.8
+        },
+        "total": {
+          "exact": 621,
+          "alnum": 0,
+          "multipart": 0,
+          "fuzzy": 1,
+          "overlap": 0,
+          "unmatched": 4,
+          "multi_candidate": 447,
+          "matched_pct": 99.4
+        }
+      }
+    },
+    "test": {
+      "n": 361,
+      "words_per_doc_mean": 108.2,
+      "bio_violations": 0,
+      "box_problems": 0,
+      "fields": {
+        "company": {
+          "exact": 343,
+          "alnum": 5,
+          "multipart": 0,
+          "fuzzy": 10,
+          "overlap": 0,
+          "unmatched": 3,
+          "multi_candidate": 5,
+          "matched_pct": 99.2
+        },
+        "date": {
+          "exact": 348,
+          "alnum": 1,
+          "multipart": 0,
+          "fuzzy": 4,
+          "overlap": 0,
+          "unmatched": 8,
+          "multi_candidate": 61,
+          "matched_pct": 97.8
+        },
+        "address": {
+          "exact": 11,
+          "alnum": 6,
+          "multipart": 196,
+          "fuzzy": 21,
+          "overlap": 0,
+          "unmatched": 127,
+          "multi_candidate": 0,
+          "matched_pct": 64.8
+        },
+        "total": {
+          "exact": 355,
+          "alnum": 3,
+          "multipart": 0,
+          "fuzzy": 1,
+          "overlap": 0,
+          "unmatched": 2,
+          "multi_candidate": 254,
+          "matched_pct": 99.4
+        }
+      }
+    }
+  }
+}
