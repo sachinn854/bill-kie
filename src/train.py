@@ -73,6 +73,7 @@ def build_trainer_class():
     dataset yields raw words and a PIL image. The precomputed word counts
     on the dataset are passed instead.
     """
+    import torch
     from transformers import Trainer
     from transformers.trainer_pt_utils import LengthGroupedSampler
 
@@ -84,6 +85,24 @@ def build_trainer_class():
             return LengthGroupedSampler(
                 self.args.train_batch_size
                 * self.args.gradient_accumulation_steps,
+                lengths=lengths,
+                generator=torch.Generator().manual_seed(self.args.seed),
+            )
+
+        def _get_eval_sampler(self, eval_dataset, *args, **kwargs):
+            # Trainer applies group_by_length to evaluation too, and on a
+            # dataset that is not a datasets.Dataset it tries to infer
+            # lengths from an 'input_ids' key that this one does not have.
+            # Supply the lengths when we have them - grouping speeds eval
+            # as well, and metrics do not depend on example order - and
+            # fall back to sequential when we do not.
+            lengths = getattr(eval_dataset, "lengths", None)
+            if not self.args.group_by_length:
+                return super()._get_eval_sampler(eval_dataset, *args, **kwargs)
+            if not lengths:
+                return torch.utils.data.SequentialSampler(eval_dataset)
+            return LengthGroupedSampler(
+                self.args.eval_batch_size,
                 lengths=lengths,
                 generator=torch.Generator().manual_seed(self.args.seed),
             )
@@ -255,7 +274,8 @@ def main() -> None:
         args=targs,
         train_dataset=build_dataset(train_split, args.dataset,
                                     with_lengths=args.group_by_length),
-        eval_dataset=build_dataset(eval_split, args.dataset),
+        eval_dataset=build_dataset(eval_split, args.dataset,
+                                   with_lengths=args.group_by_length),
         data_collator=collator,
         compute_metrics=make_compute_metrics(
             spec["id2label"],
