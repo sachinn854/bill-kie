@@ -11,7 +11,9 @@ experiment:
 
 data:
   dataset_id: nielsr/cord-layoutlmv3   # pre-tokenised; naver-clova-ix/cord-v2 is the raw source
-  max_seq_length: 512
+  # 256 chosen from measured throughput on 4 GB; verify against the real
+  # CORD token-length distribution before trusting it (scripts/analyse_lengths.py)
+  max_seq_length: 256
   # Low-data study: null = use all 800 training samples
   train_subset_size: null
 
@@ -35,8 +37,7 @@ training:
   logging_steps: 20
   # Auto-filled from GPU if null
   per_device_batch_size: null
-  gradient_accumulation_steps: null
-  gradient_checkpointing: null
+  gradient_accumulation_steps: null   # auto: effective batch pinned to 16
   fp16: null
 
 evaluation:
