@@ -23,9 +23,13 @@ class ReceiptDataset(Dataset):
     """Holds decoded examples plus their images, ready for the collator."""
 
     def __init__(self, rows: Sequence[Any],
-                 builder: Callable[[Any], tuple[Example, Any]]):
+                 builder: Callable[[Any], tuple[Example, Any]],
+                 lengths: Sequence[int] | None = None):
         self.rows = rows
         self.builder = builder
+        # Word counts, for length-grouped batching. Approximate (words, not
+        # subwords) and cheap, which is all the sampler needs.
+        self.lengths = list(lengths) if lengths is not None else None
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -48,11 +52,31 @@ def _cord_builder(row) -> tuple[Example, None]:
     return parse_cord(row["ground_truth"]), None
 
 
-def build_dataset(hf_split, dataset: str) -> ReceiptDataset:
+def _cheap_lengths(hf_split, dataset: str) -> list[int]:
+    """Word count per document, without running the full builder.
+
+    Used only to group similar-length receipts into the same batch. SROIE's
+    builder runs fuzzy string alignment per document, which is far too slow
+    to invoke just to measure a length, so count the raw segments instead.
+    """
     if dataset == "cord":
-        return ReceiptDataset(hf_split, _cord_builder)
+        import json
+        out = []
+        for gt in hf_split["ground_truth"]:
+            lines = json.loads(gt)["valid_line"]
+            out.append(sum(len(line["words"]) for line in lines))
+        return out
+    return [sum(len(seg.split()) for seg in words)
+            for words in hf_split["words"]]
+
+
+def build_dataset(hf_split, dataset: str,
+                  with_lengths: bool = False) -> ReceiptDataset:
+    lengths = _cheap_lengths(hf_split, dataset) if with_lengths else None
+    if dataset == "cord":
+        return ReceiptDataset(hf_split, _cord_builder, lengths)
     if dataset == "sroie":
-        return ReceiptDataset(hf_split, build_sroie)
+        return ReceiptDataset(hf_split, build_sroie, lengths)
     raise ValueError(f"unknown dataset {dataset!r}")
 
 
@@ -100,6 +124,58 @@ class Collator:
             return_tensors="pt",
         )
         return dict(encoding)
+
+
+@dataclass
+class TextOnlyCollator:
+    """Encode the same receipts for a plain text model - no boxes, no image.
+
+    This is the ablation that makes the main result interpretable. It sees
+    exactly the same words in exactly the same reading order as
+    LayoutLMv3, and differs only in being denied the layout and the
+    picture, so the gap between the two is attributable to those and not
+    to a different tokenisation, split or label set.
+
+    Labels are aligned by word id, tagging the first subword of each word
+    and marking continuations -100, which is what the LayoutLMv3 processor
+    does internally.
+    """
+
+    tokenizer: Any
+    max_length: int = 256
+    pad_to_multiple_of: int | None = 8
+    ignore_index: int = -100
+
+    def __call__(self, features: list[dict]) -> dict:
+        encoding = self.tokenizer(
+            [f["words"] for f in features],
+            is_split_into_words=True,
+            truncation=True,
+            padding=True,
+            max_length=self.max_length,
+            pad_to_multiple_of=self.pad_to_multiple_of,
+            return_tensors="pt",
+        )
+
+        import torch
+
+        all_labels = []
+        for i, feature in enumerate(features):
+            word_ids = encoding.word_ids(batch_index=i)
+            labels, previous = [], None
+            for word_id in word_ids:
+                if word_id is None:
+                    labels.append(self.ignore_index)
+                elif word_id != previous:
+                    labels.append(feature["labels"][word_id])
+                else:
+                    labels.append(self.ignore_index)
+                previous = word_id
+            all_labels.append(labels)
+
+        batch = {k: v for k, v in encoding.items()}
+        batch["labels"] = torch.tensor(all_labels, dtype=torch.long)
+        return batch
 
 
 def build_processor(checkpoint: str, cache_dir: str | None = None):

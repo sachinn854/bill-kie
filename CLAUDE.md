@@ -30,20 +30,29 @@ to delay those four.
 
 Data layer complete and validated. Model layer not yet written.
 
-| Written | Not yet written |
+All code is written. What remains is running it and writing the report.
+
+| Module | Purpose |
 |---|---|
-| `src/utils/env.py` | `src/baselines/rules.py` |
-| `src/data/schema.py` | `src/baselines/text_only.py` |
-| `src/data/cord.py` | `src/assemble.py` |
-| `src/data/sroie.py` | `scripts/run_sweep.py` |
-| `src/data/loaders.py` | |
-| `src/eval/metrics.py` | |
-| `src/train.py` | |
-| `scripts/benchmark_vram.py` | |
-| `scripts/analyse_lengths.py` | |
-| `scripts/validate_preprocessing.py` | |
-| `scripts/validate_sroie.py` | |
-| `scripts/smoke_test.py` | |
+| `src/utils/env.py` | platform, paths, batch config, Tesseract |
+| `src/data/schema.py` | label sets, core fields, unified JSON map |
+| `src/data/cord.py` / `sroie.py` | dataset to BIO features |
+| `src/data/loaders.py` | datasets, collators (layout and text-only) |
+| `src/train.py` | fine-tuning, both models and the text ablation |
+| `src/eval/metrics.py` | token-level entity F1 |
+| `src/eval/field_eval.py` | field-value F1, exact and fuzzy |
+| `src/assemble.py` | tags to receipt JSON |
+| `src/baselines/rules.py` | Baseline 1: Tesseract + rules |
+| `scripts/run_sweep.py` / `plot_sweep.py` | the low-data study |
+| `scripts/run_rule_baseline.py` | Baseline 1 evaluation |
+| `scripts/smoke_test.py` | CPU check of the whole encoding path |
+| `scripts/benchmark_vram.py` | what fits on this GPU |
+| `scripts/analyse_lengths.py` | CORD token-length and label profile |
+| `scripts/validate_preprocessing.py` / `validate_sroie.py` | data checks |
+
+Baseline 2 (text-only BERT) is `src/train.py --text-only`, deliberately
+sharing the splits, seeds and metrics of the main model so the ablation
+isolates layout.
 
 The training path is verified end to end on CPU by
 `scripts/smoke_test.py`, for both datasets: boxes land on the 0-1000
@@ -158,6 +167,13 @@ at the ICDAR RRC portal.
   also returns headers, footers and barcode junk, the CORD model will
   assign those to some field. State this as a limitation; it is a
   property of the dataset, not a bug in the pipeline.
+- **Line-item grouping is the ceiling, not tagging.** CORD's `group_id`
+  is annotation metadata and does not exist at inference, so items must
+  be recovered from vertical position. Measured with ground-truth tags
+  over 200 receipts, that recovers 96% of items and an exactly correct
+  item count on 78% of receipts. The tolerance sweep is flat from 0.008
+  to 0.020, so this is a property of the approach rather than a tuning
+  failure, and it bounds line-item output however good the model gets.
 - SROIE labels entity *values*, not words, so labels must be recovered by
   string matching. Match rates are in `results/logs/sroie_alignment.json`
   and are the label-noise budget for that model - quote them in the

@@ -24,8 +24,8 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-from src.data.loaders import (Collator, build_dataset, build_processor,
-                              subsample)
+from src.data.loaders import (Collator, TextOnlyCollator, build_dataset,
+                              build_processor, subsample)
 from src.data.schema import (CORD_ABSENT_FROM_TEST, CORD_CATEGORIES,
                              CORD_CORE_FIELDS, CORD_ID2LABEL, CORD_LABELS,
                              CORD_TOO_RARE, SROIE_CATEGORIES,
@@ -59,6 +59,38 @@ DATASETS = {
 }
 
 
+def build_trainer_class():
+    """Trainer that can group same-length receipts into a batch.
+
+    Receipts vary enormously in length - CORD's median is 48 tokens but its
+    maximum is 296 - and a batch pads to its longest member, so random
+    batching pads a typical batch to roughly 240. Grouping by length cuts
+    that to near each batch's own content, and the measured difference is
+    large: 19 samples/s at sequence length 96 against 9.4 at 256.
+
+    Trainer's own group_by_length cannot be used directly here, because it
+    infers lengths by reading 'input_ids' off each dataset item, and this
+    dataset yields raw words and a PIL image. The precomputed word counts
+    on the dataset are passed instead.
+    """
+    from transformers import Trainer
+    from transformers.trainer_pt_utils import LengthGroupedSampler
+
+    class LengthGroupedTrainer(Trainer):
+        def _get_train_sampler(self, *args, **kwargs):
+            lengths = getattr(self.train_dataset, "lengths", None)
+            if not self.args.group_by_length or not lengths:
+                return super()._get_train_sampler(*args, **kwargs)
+            return LengthGroupedSampler(
+                self.args.train_batch_size
+                * self.args.gradient_accumulation_steps,
+                lengths=lengths,
+                generator=torch.Generator().manual_seed(self.args.seed),
+            )
+
+    return LengthGroupedTrainer
+
+
 def load_config(path: str | None) -> dict:
     if not path:
         return {}
@@ -78,9 +110,13 @@ def resolve(cfg: dict, args) -> dict:
             return cli
         return fallback if cfg_value is None else cfg_value
 
+    default_checkpoint = (args.text_checkpoint if args.text_only
+                          else model.get("checkpoint",
+                                         "microsoft/layoutlmv3-base"))
     resolved = {
         "dataset": args.dataset,
-        "checkpoint": model.get("checkpoint", "microsoft/layoutlmv3-base"),
+        "checkpoint": default_checkpoint,
+        "text_only": args.text_only,
         "seed": pick(args.seed, experiment.get("seed"), 42),
         "train_size": pick(args.train_size, data.get("train_subset_size"), None),
         "max_seq_length": pick(args.max_seq_length,
@@ -97,7 +133,8 @@ def resolve(cfg: dict, args) -> dict:
         "grad_accum": pick(None, training.get("gradient_accumulation_steps"),
                            auto["gradient_accumulation_steps"]),
         "fp16": pick(None, training.get("fp16"), auto["fp16"]),
-        "name": args.name or experiment.get("name") or f"{args.dataset}_run",
+        "name": (args.name or experiment.get("name")
+                 or f"{args.dataset}{'_textonly' if args.text_only else ''}_run"),
     }
     # Keep the effective batch size fixed when only one side was overridden.
     if args.batch_size is not None:
@@ -122,10 +159,25 @@ def main() -> None:
     ap.add_argument("--name", help="run name; results/logs/<name>.json")
     ap.add_argument("--no-save", action="store_true",
                     help="skip checkpoints (sweeps do not need 15 copies)")
+    ap.add_argument("--text-only", action="store_true",
+                    help="Baseline 2: train a plain text model on the same "
+                         "words with no layout and no image. The ablation "
+                         "that shows whether layout is what helps.")
+    ap.add_argument("--text-checkpoint", default="bert-base-uncased",
+                    help="encoder for --text-only")
+    ap.add_argument("--group-by-length", action="store_true",
+                    help="batch receipts of similar length together. Cuts "
+                         "padding waste sharply; batch composition changes, "
+                         "so keep it consistent across runs being compared.")
+    ap.add_argument("--num-workers", type=int, default=0,
+                    help="dataloader workers. Image decode and resize happen "
+                         "on CPU in the collator, so with 0 the GPU waits on "
+                         "them; 2 overlaps the two. Costs RAM per worker.")
     args = ap.parse_args()
 
     import torch
-    from transformers import (LayoutLMv3ForTokenClassification, Trainer,
+    from transformers import (AutoModelForTokenClassification, AutoTokenizer,
+                              LayoutLMv3ForTokenClassification,
                               TrainingArguments, set_seed)
 
     spec = DATASETS[args.dataset]
@@ -150,16 +202,25 @@ def main() -> None:
     print(f"\ntrain={len(train_split)}  eval={len(eval_split)}  "
           f"labels={len(spec['labels'])}")
 
-    processor = build_processor(cfg["checkpoint"], cache_dir=str(paths.cache))
-    collator = Collator(processor, max_length=cfg["max_seq_length"])
-
-    model = LayoutLMv3ForTokenClassification.from_pretrained(
-        cfg["checkpoint"],
-        num_labels=len(spec["labels"]),
-        id2label=spec["id2label"],
-        label2id={v: k for k, v in spec["id2label"].items()},
-        cache_dir=str(paths.cache),
-    )
+    common = {
+        "num_labels": len(spec["labels"]),
+        "id2label": spec["id2label"],
+        "label2id": {v: k for k, v in spec["id2label"].items()},
+        "cache_dir": str(paths.cache),
+    }
+    if args.text_only:
+        tokenizer = AutoTokenizer.from_pretrained(
+            cfg["checkpoint"], cache_dir=str(paths.cache))
+        collator = TextOnlyCollator(tokenizer,
+                                    max_length=cfg["max_seq_length"])
+        model = AutoModelForTokenClassification.from_pretrained(
+            cfg["checkpoint"], **common)
+    else:
+        processor = build_processor(cfg["checkpoint"],
+                                    cache_dir=str(paths.cache))
+        collator = Collator(processor, max_length=cfg["max_seq_length"])
+        model = LayoutLMv3ForTokenClassification.from_pretrained(
+            cfg["checkpoint"], **common)
 
     out_dir = paths.checkpoints / cfg["name"]
     targs = TrainingArguments(
@@ -181,15 +242,19 @@ def main() -> None:
         logging_steps=20,
         report_to=[],
         seed=cfg["seed"],
-        dataloader_num_workers=0,   # Windows spawns processes; workers cost
-                                    # more than they save on datasets this size
+        group_by_length=args.group_by_length,
+        dataloader_num_workers=args.num_workers,
+        # Workers are re-spawned every epoch otherwise, which on Windows
+        # costs more than the overlap they buy.
+        dataloader_persistent_workers=args.num_workers > 0,
         remove_unused_columns=False,
     )
 
-    trainer = Trainer(
+    trainer = build_trainer_class()(
         model=model,
         args=targs,
-        train_dataset=build_dataset(train_split, args.dataset),
+        train_dataset=build_dataset(train_split, args.dataset,
+                                    with_lengths=args.group_by_length),
         eval_dataset=build_dataset(eval_split, args.dataset),
         data_collator=collator,
         compute_metrics=make_compute_metrics(
@@ -214,6 +279,8 @@ def main() -> None:
         "train_size": len(train_split),
         "eval_size": len(eval_split),
         "train_seconds": round(elapsed, 1),
+        "num_workers": args.num_workers,
+        "group_by_length": args.group_by_length,
         "metrics": {k: (float(v) if isinstance(v, (int, float, np.floating))
                         else v)
                     for k, v in metrics.items()},
