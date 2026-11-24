@@ -1,0 +1,22 @@
+{
+  "dataset": "CORD test (100 receipts)",
+  "note": "pretrained rows use a freshly initialised classification head",
+  "rows": [
+    {
+      "backbone": "microsoft/layoutlmv3-base",
+      "pretrained_f1": 0.03709810387469085,
+      "pretrained_core_f1": 0.04054054054054054,
+      "finetuned_f1": 0.9119329012581013,
+      "finetuned_core_f1": 0.941329856584094,
+      "delta_f1": 0.8748347973834105
+    },
+    {
+      "backbone": "bert-base-uncased",
+      "pretrained_f1": 0.0,
+      "pretrained_core_f1": 0.0,
+      "finetuned_f1": 0.9192073170731707,
+      "finetuned_core_f1": 0.9423076923076923,
+      "delta_f1": 0.9192073170731707
+    }
+  ]
+}

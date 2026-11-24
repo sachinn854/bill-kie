@@ -27,3 +27,6 @@ tqdm
 
 # Experiment tracking (offline-capable)
 tensorboard
+
+# Streamlit app
+streamlit

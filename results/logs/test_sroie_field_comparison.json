@@ -1,0 +1,141 @@
+{
+  "transformer": {
+    "micro": {
+      "exact": {
+        "precision": 0.7494,
+        "recall": 0.6253,
+        "f1": 0.6818
+      },
+      "fuzzy": {
+        "precision": 0.7759,
+        "recall": 0.6475,
+        "f1": 0.7059
+      }
+    },
+    "per_field": {
+      "address": {
+        "exact": {
+          "precision": 0.0602,
+          "recall": 0.0443,
+          "f1": 0.051
+        },
+        "fuzzy": {
+          "precision": 0.1429,
+          "recall": 0.1053,
+          "f1": 0.1212
+        },
+        "support": 361
+      },
+      "company": {
+        "exact": {
+          "precision": 0.9167,
+          "recall": 0.9141,
+          "f1": 0.9154
+        },
+        "fuzzy": {
+          "precision": 0.9389,
+          "recall": 0.9363,
+          "f1": 0.9376
+        },
+        "support": 361
+      },
+      "date": {
+        "exact": {
+          "precision": 0.9736,
+          "recall": 0.9197,
+          "f1": 0.9459
+        },
+        "fuzzy": {
+          "precision": 0.9795,
+          "recall": 0.9252,
+          "f1": 0.9516
+        },
+        "support": 361
+      },
+      "total": {
+        "exact": {
+          "precision": 0.9454,
+          "recall": 0.6233,
+          "f1": 0.7513
+        },
+        "fuzzy": {
+          "precision": 0.9454,
+          "recall": 0.6233,
+          "f1": 0.7513
+        },
+        "support": 361
+      }
+    },
+    "n_documents": 361
+  },
+  "rules_baseline": {
+    "micro": {
+      "exact": {
+        "precision": 0.4086,
+        "recall": 0.3733,
+        "f1": 0.3902
+      },
+      "fuzzy": {
+        "precision": 0.5277,
+        "recall": 0.482,
+        "f1": 0.5038
+      }
+    },
+    "per_field": {
+      "address": {
+        "exact": {
+          "precision": 0.131,
+          "recall": 0.1219,
+          "f1": 0.1263
+        },
+        "fuzzy": {
+          "precision": 0.3869,
+          "recall": 0.3601,
+          "f1": 0.373
+        },
+        "support": 361
+      },
+      "company": {
+        "exact": {
+          "precision": 0.3879,
+          "recall": 0.374,
+          "f1": 0.3808
+        },
+        "fuzzy": {
+          "precision": 0.5172,
+          "recall": 0.4986,
+          "f1": 0.5078
+        },
+        "support": 361
+      },
+      "date": {
+        "exact": {
+          "precision": 0.7448,
+          "recall": 0.59,
+          "f1": 0.6584
+        },
+        "fuzzy": {
+          "precision": 0.8357,
+          "recall": 0.662,
+          "f1": 0.7388
+        },
+        "support": 361
+      },
+      "total": {
+        "exact": {
+          "precision": 0.4212,
+          "recall": 0.4072,
+          "f1": 0.4141
+        },
+        "fuzzy": {
+          "precision": 0.4212,
+          "recall": 0.4072,
+          "f1": 0.4141
+        },
+        "support": 361
+      }
+    },
+    "n_documents": 361
+  },
+  "n_documents": 361
+}

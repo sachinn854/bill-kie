@@ -1,0 +1,89 @@
+{
+  "name": "sroie_layoutlmv3_base",
+  "dataset": "sroie",
+  "config": {
+    "dataset": "sroie",
+    "checkpoint": "microsoft/layoutlmv3-base",
+    "text_only": false,
+    "seed": 42,
+    "train_size": null,
+    "max_seq_length": 256,
+    "epochs": 20,
+    "learning_rate": 1e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "batch_size": 4,
+    "grad_accum": 4,
+    "fp16": true,
+    "name": "sroie_layoutlmv3_base",
+    "effective_batch_size": 16
+  },
+  "env": {
+    "platform": "local",
+    "os": "Windows 10",
+    "python": "3.11.15",
+    "tesseract": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+    "torch": "2.9.1+cu128",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "vram_gb": 4.0,
+    "cuda_version": "12.8"
+  },
+  "train_size": 563,
+  "eval_size": 63,
+  "train_seconds": 2810.5,
+  "num_workers": 0,
+  "group_by_length": true,
+  "metrics": {
+    "eval_loss": 0.04942251369357109,
+    "eval_precision": 0.8738317757009346,
+    "eval_recall": 0.8862559241706162,
+    "eval_f1": 0.88,
+    "eval_macro_f1_scoreable": 0.8726153182455276,
+    "eval_n_scoreable_categories": 4.0,
+    "eval_core_f1": 0.88,
+    "eval_core_precision": 0.8738317757009346,
+    "eval_core_recall": 0.8862559241706162,
+    "eval_runtime": 6.5263,
+    "eval_samples_per_second": 9.653,
+    "eval_steps_per_second": 2.452,
+    "epoch": 20.0
+  },
+  "detail": {
+    "precision": 0.8738317757009346,
+    "recall": 0.8862559241706162,
+    "f1": 0.88,
+    "per_field": {
+      "address": {
+        "precision": 0.8095,
+        "recall": 0.8293,
+        "f1": 0.8193,
+        "support": 41
+      },
+      "company": {
+        "precision": 0.8955,
+        "recall": 0.9524,
+        "f1": 0.9231,
+        "support": 63
+      },
+      "date": {
+        "precision": 1.0,
+        "recall": 0.9818,
+        "f1": 0.9908,
+        "support": 55
+      },
+      "total": {
+        "precision": 0.7647,
+        "recall": 0.75,
+        "f1": 0.7573,
+        "support": 52
+      }
+    },
+    "macro_f1_scoreable": 0.8726153182455276,
+    "n_scoreable_categories": 4,
+    "excluded_categories": [],
+    "core_f1": 0.88,
+    "core_precision": 0.8738317757009346,
+    "core_recall": 0.8862559241706162
+  }
+}

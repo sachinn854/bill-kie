@@ -33,3 +33,11 @@ results/checkpoints/*
 Thumbs.db
 .vscode/
 .idea/
+
+# Local tooling and generated artifacts
+node_modules/
+package.json
+package-lock.json
+.agents/
+.claude/
+*.pptx

@@ -1,0 +1,78 @@
+{
+  "name": "baseline_rules_sroie",
+  "baseline": "tesseract+rules",
+  "dataset": "jsdnrs/ICDAR2019-SROIE",
+  "split": "test",
+  "n": 361,
+  "seconds_per_receipt": 0.604,
+  "psm": 6,
+  "results": {
+    "micro": {
+      "exact": {
+        "precision": 0.4086,
+        "recall": 0.3733,
+        "f1": 0.3902
+      },
+      "fuzzy": {
+        "precision": 0.5277,
+        "recall": 0.482,
+        "f1": 0.5038
+      }
+    },
+    "per_field": {
+      "address": {
+        "exact": {
+          "precision": 0.131,
+          "recall": 0.1219,
+          "f1": 0.1263
+        },
+        "fuzzy": {
+          "precision": 0.3869,
+          "recall": 0.3601,
+          "f1": 0.373
+        },
+        "support": 361
+      },
+      "company": {
+        "exact": {
+          "precision": 0.3879,
+          "recall": 0.374,
+          "f1": 0.3808
+        },
+        "fuzzy": {
+          "precision": 0.5172,
+          "recall": 0.4986,
+          "f1": 0.5078
+        },
+        "support": 361
+      },
+      "date": {
+        "exact": {
+          "precision": 0.7448,
+          "recall": 0.59,
+          "f1": 0.6584
+        },
+        "fuzzy": {
+          "precision": 0.8357,
+          "recall": 0.662,
+          "f1": 0.7388
+        },
+        "support": 361
+      },
+      "total": {
+        "exact": {
+          "precision": 0.4212,
+          "recall": 0.4072,
+          "f1": 0.4141
+        },
+        "fuzzy": {
+          "precision": 0.4212,
+          "recall": 0.4072,
+          "f1": 0.4141
+        },
+        "support": 361
+      }
+    },
+    "n_documents": 361
+  }
+}

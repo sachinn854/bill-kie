@@ -1,0 +1,42 @@
+{
+  "limit": 20,
+  "sroie": {
+    "company_expected": 20,
+    "company_exact": 10,
+    "address_expected": 20,
+    "date_expected": 20,
+    "total_expected": 20,
+    "total_exact": 12,
+    "non_numeric_noise_fields": 63,
+    "raw_junk_items": 96,
+    "items_dropped_by_cleanup": 56,
+    "address_exact": 5,
+    "date_exact": 12
+  },
+  "cord": {
+    "items_expected": 75,
+    "items_extracted": 30,
+    "receipts_with_missing_items": 17,
+    "raw_junk_items": 45,
+    "items_dropped_by_cleanup": 27,
+    "non_numeric_noise_fields": 22
+  },
+  "examples": [
+    "sroie[0] address: got 'NO 2 & 4, JALAN BAYU 4, BANDAR SERI ALAM, 81750 MASAI, JOHOR', expected 'NO 2 & 4, JALAN BAYU 4, BANDAR SERI ALAM, B1750 MASAI, JOHOR' (ocr words=94)",
+    "sroie[0] date: got None, expected '15/01/2019' (ocr words=94)",
+    "sroie[2] company: got 'PERNIAGAAN ZHENG HU!', expected 'PERNIAGAAN ZHENG HUI' (ocr words=141)",
+    "sroie[2] address: got 'JALAN, BANDAR BARU PERMAS JAYA 81750 JOHOR BAHRU 7524', expected 'NO.59 JALAN PERMAS 9/5 BANDAR BARU PERMAS JAYA 81750 JOHOR BAHRU' (ocr words=141)",
+    "sroie[2] date: got '09/02/2078', expected '09/02/2018' (ocr words=141)",
+    "sroie[2] total: got None, expected '436.20' (ocr words=141)",
+    "sroie[3] company: got 'PETRON BKT LANJAN SB ALSERKAM ENTERPRISE', expected 'PETRON BKT LANJAN SB' (ocr words=88)",
+    "sroie[4] address: got \"of McDonald's, Level 6, Bangunan TH, Damansara Uptown3 No.3, Jalan $S21/39,47406 Petaling Jaya Selangor\", expected 'LEVEL 6, BANGUNAN TH, DAMANSARA UPTOWN3 NO.3, JALAN SS21/39,47400 PETALING JAYA SELANGOR' (ocr words=129)",
+    "cord[0] expected 3 items, got 0 (ocr words=23)",
+    "cord[1] expected 4 items, got 0 (ocr words=13)",
+    "cord[2] expected 3 items, got 0 (ocr words=32)",
+    "cord[3] expected 3 items, got 1 (ocr words=21)",
+    "cord[4] expected 5 items, got 0 (ocr words=39)",
+    "cord[6] expected 4 items, got 2 (ocr words=17)",
+    "cord[7] expected 3 items, got 0 (ocr words=44)",
+    "cord[8] expected 3 items, got 0 (ocr words=47)"
+  ]
+}

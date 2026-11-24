@@ -1,0 +1,205 @@
+{
+  "name": "sweep_cord_n100_s42",
+  "dataset": "cord",
+  "config": {
+    "dataset": "cord",
+    "checkpoint": "microsoft/layoutlmv3-base",
+    "text_only": false,
+    "seed": 42,
+    "train_size": 100,
+    "max_seq_length": 256,
+    "epochs": 50,
+    "learning_rate": 1e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "batch_size": 4,
+    "grad_accum": 4,
+    "fp16": true,
+    "name": "sweep_cord_n100_s42",
+    "effective_batch_size": 16
+  },
+  "env": {
+    "platform": "local",
+    "os": "Windows 10",
+    "python": "3.11.15",
+    "tesseract": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+    "torch": "2.9.1+cu128",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "vram_gb": 4.0,
+    "cuda_version": "12.8"
+  },
+  "train_size": 100,
+  "eval_size": 100,
+  "train_seconds": 724.8,
+  "num_workers": 0,
+  "group_by_length": true,
+  "metrics": {
+    "eval_loss": 0.9842982292175293,
+    "eval_precision": 0.7791164658634538,
+    "eval_recall": 0.7957342083675144,
+    "eval_f1": 0.7873376623376624,
+    "eval_macro_f1_scoreable": 0.3505151094900307,
+    "eval_n_scoreable_categories": 22.0,
+    "eval_core_f1": 0.8390754470126472,
+    "eval_core_precision": 0.7808441558441559,
+    "eval_core_recall": 0.9066918001885014,
+    "eval_runtime": 6.03,
+    "eval_samples_per_second": 16.584,
+    "eval_steps_per_second": 4.146,
+    "epoch": 50.0
+  },
+  "detail": {
+    "precision": 0.7791164658634538,
+    "recall": 0.7957342083675144,
+    "f1": 0.7873376623376624,
+    "per_field": {
+      "menu.cnt": {
+        "precision": 0.7804,
+        "recall": 0.9476,
+        "f1": 0.8559,
+        "support": 210
+      },
+      "menu.discountprice": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "menu.nm": {
+        "precision": 0.7537,
+        "recall": 0.9099,
+        "f1": 0.8245,
+        "support": 222
+      },
+      "menu.num": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "menu.price": {
+        "precision": 0.8816,
+        "recall": 0.9818,
+        "f1": 0.929,
+        "support": 220
+      },
+      "menu.sub.cnt": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 32
+      },
+      "menu.sub.nm": {
+        "precision": 0.6154,
+        "recall": 0.1633,
+        "f1": 0.2581,
+        "support": 49
+      },
+      "menu.sub.price": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 14
+      },
+      "menu.unitprice": {
+        "precision": 0.8627,
+        "recall": 0.88,
+        "f1": 0.8713,
+        "support": 50
+      },
+      "menu.vatyn": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 1
+      },
+      "sub_total.discount_price": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 6
+      },
+      "sub_total.etc": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 2
+      },
+      "sub_total.service_price": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 13
+      },
+      "sub_total.subtotal_price": {
+        "precision": 0.8841,
+        "recall": 0.9104,
+        "f1": 0.8971,
+        "support": 67
+      },
+      "sub_total.tax_price": {
+        "precision": 0.5972,
+        "recall": 0.9149,
+        "f1": 0.7227,
+        "support": 47
+      },
+      "total.cashprice": {
+        "precision": 0.6,
+        "recall": 0.75,
+        "f1": 0.6667,
+        "support": 64
+      },
+      "total.changeprice": {
+        "precision": 0.7867,
+        "recall": 0.9219,
+        "f1": 0.8489,
+        "support": 64
+      },
+      "total.creditcardprice": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 15
+      },
+      "total.emoneyprice": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "total.menuqty_cnt": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 26
+      },
+      "total.menutype_cnt": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 3
+      },
+      "total.total_etc": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "total.total_price": {
+        "precision": 0.7692,
+        "recall": 0.9184,
+        "f1": 0.8372,
+        "support": 98
+      }
+    },
+    "macro_f1_scoreable": 0.3505151094900307,
+    "n_scoreable_categories": 22,
+    "excluded_categories": [
+      "menu.vatyn"
+    ],
+    "core_f1": 0.8390754470126472,
+    "core_precision": 0.7808441558441559,
+    "core_recall": 0.9066918001885014
+  }
+}
